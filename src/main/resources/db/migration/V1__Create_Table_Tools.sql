@@ -1,0 +1,7 @@
+CREATE TABLE tools (
+	id SERIAL PRIMARY KEY,
+	title VARCHAR(50) NOT NULL,
+	description VARCHAR(255) NOT NULL,
+	url TEXT NOT NULL,
+	tags VARCHAR(20) ARRAY
+);
