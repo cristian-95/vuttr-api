@@ -58,11 +58,11 @@ public class Tool {
         this.description = description;
     }
 
-    public String getLink() {
+    public String getUrl() {
         return url;
     }
 
-    public void setLink(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
