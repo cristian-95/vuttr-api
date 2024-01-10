@@ -26,8 +26,7 @@ public class Tool {
     public Tool() {
     }
 
-    public Tool(Long id, String title, String description, String url, List<String> tags) {
-        this.id = id;
+    public Tool(String title, String description, String url, List<String> tags) {
         this.title = title;
         this.description = description;
         this.url = url;

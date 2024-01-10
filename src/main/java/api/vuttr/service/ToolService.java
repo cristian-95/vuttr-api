@@ -1,5 +1,6 @@
 package api.vuttr.service;
 
+import api.vuttr.data.ToolRecord;
 import api.vuttr.model.Tool;
 import api.vuttr.repository.ToolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,30 +12,41 @@ import java.util.List;
 @Service
 public class ToolService {
 
+
     @Autowired
     private ToolRepository repository;
 
-    public List<Tool> findAll() {
-        return repository.findAll();
+    public List<ToolRecord> findAll() {
+        var entityList = repository.findAll();
+        return entityList.stream().map(e -> new ToolRecord(e.getId(), e.getTitle(), e.getDescription(), e.getUrl(), e.getTags())).toList();
     }
 
-    public Tool findById(Long id) throws ChangeSetPersister.NotFoundException {
-        return repository.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+    public ToolRecord findById(Long id) throws ChangeSetPersister.NotFoundException {
+        var entity = repository.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        return new ToolRecord(
+                entity.getId(),
+                entity.getTitle(),
+                entity.getDescription(),
+                entity.getUrl(),
+                entity.getTags()
+        );
     }
 
-    public Tool create(Tool tool) {
-        return repository.save(tool);
+    public ToolRecord create(ToolRecord tool) throws ChangeSetPersister.NotFoundException {
+        var entity = new Tool(tool.title(), tool.description(), tool.url(), tool.tags());
+        repository.save(entity);
+        return findById(entity.getId());
     }
 
-    public Tool update(Tool tool) throws ChangeSetPersister.NotFoundException {
-        var updated = repository.findById(tool.getId()).orElseThrow(ChangeSetPersister.NotFoundException::new);
+    public ToolRecord update(ToolRecord tool) throws ChangeSetPersister.NotFoundException {
+        var updated = repository.findById(tool.id()).orElseThrow(ChangeSetPersister.NotFoundException::new);
 
-        updated.setTitle(tool.getTitle());
-        updated.setDescription(tool.getDescription());
-        updated.setUrl(tool.getUrl());
-        updated.setTags(tool.getTags());
-
-        return repository.save(updated);
+        updated.setTitle(tool.title());
+        updated.setDescription(tool.description());
+        updated.setUrl(tool.url());
+        updated.setTags(tool.tags());
+        var entity = repository.save(updated);
+        return new ToolRecord(entity.getId(), entity.getTitle(), entity.getDescription(), entity.getUrl(), entity.getTags());
     }
 
     public void delete(Long id) throws ChangeSetPersister.NotFoundException {

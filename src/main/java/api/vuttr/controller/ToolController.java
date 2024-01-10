@@ -1,6 +1,6 @@
 package api.vuttr.controller;
 
-import api.vuttr.model.Tool;
+import api.vuttr.data.ToolRecord;
 import api.vuttr.service.ToolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -18,22 +18,23 @@ public class ToolController {
     private ToolService service;
 
     @GetMapping
-    public ResponseEntity<List<Tool>> findAll() {
+    public ResponseEntity<List<ToolRecord>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tool> findById(@PathVariable("id") Long id) throws ChangeSetPersister.NotFoundException {
+    public ResponseEntity<ToolRecord> findById(@PathVariable("id") Long id) throws ChangeSetPersister.NotFoundException {
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Tool> create(@RequestBody Tool tool) {
+    public ResponseEntity<ToolRecord> create(@RequestBody ToolRecord tool) throws ChangeSetPersister.NotFoundException {
         return ResponseEntity.ok(service.create(tool));
+
     }
 
     @PutMapping
-    public ResponseEntity<Tool> update(@RequestBody Tool tool) throws ChangeSetPersister.NotFoundException {
+    public ResponseEntity<ToolRecord> update(@RequestBody ToolRecord tool) throws ChangeSetPersister.NotFoundException {
         return ResponseEntity.ok(service.update(tool));
     }
 
@@ -42,6 +43,4 @@ public class ToolController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }
