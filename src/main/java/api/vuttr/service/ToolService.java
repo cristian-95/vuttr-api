@@ -1,56 +1,68 @@
 package api.vuttr.service;
 
-import api.vuttr.data.ToolRecord;
+import api.vuttr.controller.ToolController;
+import api.vuttr.data.vo.ToolVO;
 import api.vuttr.model.Tool;
 import api.vuttr.repository.ToolRepository;
+import api.vuttr.utils.mapper.ToolMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class ToolService {
 
-
+    private final static Logger logger = Logger.getLogger(ToolController.class.getName());
     @Autowired
     private ToolRepository repository;
 
-    public List<ToolRecord> findAll() {
+
+    public List<ToolVO> findAllTools() {
+        logger.info("Finding all tools in the database");
+
         var entityList = repository.findAll();
-        return entityList.stream().map(e -> new ToolRecord(e.getId(), e.getTitle(), e.getDescription(), e.getUrl(), e.getTags())).toList();
+
+        return ToolMapper.parseList(entityList, ToolVO.class);
     }
 
-    public ToolRecord findById(Long id) throws ChangeSetPersister.NotFoundException {
+    public ToolVO findToolById(Long id) throws ChangeSetPersister.NotFoundException {
+        logger.info("Finding a tool (id =" + id + " )");
+
         var entity = repository.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
-        return new ToolRecord(
-                entity.getId(),
-                entity.getTitle(),
-                entity.getDescription(),
-                entity.getUrl(),
-                entity.getTags()
-        );
+
+        return ToolMapper.parseObject(entity, ToolVO.class);
     }
 
-    public ToolRecord create(ToolRecord tool) throws ChangeSetPersister.NotFoundException {
-        var entity = new Tool(tool.title(), tool.description(), tool.url(), tool.tags());
+    public ToolVO createTool(ToolVO toolVO) throws ChangeSetPersister.NotFoundException {
+        logger.info("Creating a tool");
+
+        var entity = ToolMapper.parseObject(toolVO, Tool.class);
         repository.save(entity);
-        return findById(entity.getId());
+
+        return ToolMapper.parseObject(entity, ToolVO.class);
     }
 
-    public ToolRecord update(ToolRecord tool) throws ChangeSetPersister.NotFoundException {
-        var updated = repository.findById(tool.id()).orElseThrow(ChangeSetPersister.NotFoundException::new);
+    public ToolVO updateTool(ToolVO tool) throws ChangeSetPersister.NotFoundException {
+        logger.info("Updating a tool (id =" + tool.getId() + " )\"");
 
-        updated.setTitle(tool.title());
-        updated.setDescription(tool.description());
-        updated.setUrl(tool.url());
-        updated.setTags(tool.tags());
+        var updated = repository.findById(tool.getId()).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        updated.setTitle(tool.getTitle());
+        updated.setDescription(tool.getDescription());
+        updated.setUrl(tool.getUrl());
+        updated.setTags(tool.getTags());
         var entity = repository.save(updated);
-        return new ToolRecord(entity.getId(), entity.getTitle(), entity.getDescription(), entity.getUrl(), entity.getTags());
+
+        return ToolMapper.parseObject(entity, ToolVO.class);
     }
 
-    public void delete(Long id) throws ChangeSetPersister.NotFoundException {
+    public void deleteTool(Long id) throws ChangeSetPersister.NotFoundException {
+        logger.info("Deleting a tool (id =" + id + " )");
+
         var tool = repository.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+
         repository.delete(tool);
     }
 }

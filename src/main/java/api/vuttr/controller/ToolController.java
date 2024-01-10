@@ -1,6 +1,6 @@
 package api.vuttr.controller;
 
-import api.vuttr.data.ToolRecord;
+import api.vuttr.data.vo.ToolVO;
 import api.vuttr.service.ToolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -18,29 +18,29 @@ public class ToolController {
     private ToolService service;
 
     @GetMapping
-    public ResponseEntity<List<ToolRecord>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<List<ToolVO>> findAll() {
+        return ResponseEntity.ok(service.findAllTools());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ToolRecord> findById(@PathVariable("id") Long id) throws ChangeSetPersister.NotFoundException {
-        return ResponseEntity.ok(service.findById(id));
+    public ResponseEntity<ToolVO> findById(@PathVariable("id") Long id) throws ChangeSetPersister.NotFoundException {
+        return ResponseEntity.ok(service.findToolById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ToolRecord> create(@RequestBody ToolRecord tool) throws ChangeSetPersister.NotFoundException {
-        return ResponseEntity.ok(service.create(tool));
+    public ResponseEntity<ToolVO> create(@RequestBody ToolVO tool) throws ChangeSetPersister.NotFoundException {
+        return ResponseEntity.ok(service.createTool(tool));
 
     }
 
     @PutMapping
-    public ResponseEntity<ToolRecord> update(@RequestBody ToolRecord tool) throws ChangeSetPersister.NotFoundException {
-        return ResponseEntity.ok(service.update(tool));
+    public ResponseEntity<ToolVO> update(@RequestBody ToolVO tool) throws ChangeSetPersister.NotFoundException {
+        return ResponseEntity.ok(service.updateTool(tool));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) throws ChangeSetPersister.NotFoundException {
-        service.delete(id);
+        service.deleteTool(id);
         return ResponseEntity.noContent().build();
     }
 }
