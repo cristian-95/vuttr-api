@@ -2,11 +2,11 @@ package api.vuttr.service;
 
 import api.vuttr.controller.ToolController;
 import api.vuttr.data.vo.ToolVO;
+import api.vuttr.exception.ResourceNotFoundException;
 import api.vuttr.model.Tool;
 import api.vuttr.repository.ToolRepository;
 import api.vuttr.utils.mapper.ToolMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,20 +24,20 @@ public class ToolService {
         logger.info("Finding all tools in the database");
 
         var entityList = repository.findAll();
-
         return ToolMapper.parseList(entityList, ToolVO.class);
     }
 
-    public ToolVO findToolById(Long id) throws ChangeSetPersister.NotFoundException {
-        logger.info("Finding a tool (id =" + id + " )");
+    public ToolVO findToolById(Long id) throws ResourceNotFoundException {
+        logger.info("Finding a tool (id = " + id + ")");
 
-        var entity = repository.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool not found (id = " + id + ")"));
 
         return ToolMapper.parseObject(entity, ToolVO.class);
     }
-
-    public ToolVO createTool(ToolVO toolVO) throws ChangeSetPersister.NotFoundException {
+    
+    public ToolVO createTool(ToolVO toolVO) {
         logger.info("Creating a tool");
+
 
         var entity = ToolMapper.parseObject(toolVO, Tool.class);
         repository.save(entity);
@@ -45,10 +45,10 @@ public class ToolService {
         return ToolMapper.parseObject(entity, ToolVO.class);
     }
 
-    public ToolVO updateTool(ToolVO tool) throws ChangeSetPersister.NotFoundException {
-        logger.info("Updating a tool (id =" + tool.getId() + " )\"");
+    public ToolVO updateTool(ToolVO tool) {
+        logger.info("Updating a tool (id = " + tool.getId() + " )\"");
 
-        var updated = repository.findById(tool.getId()).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        var updated = repository.findById(tool.getId()).orElseThrow(() -> new ResourceNotFoundException("Tool not found (id = " + tool.getId() + ")"));
         updated.setTitle(tool.getTitle());
         updated.setDescription(tool.getDescription());
         updated.setUrl(tool.getUrl());
@@ -58,10 +58,10 @@ public class ToolService {
         return ToolMapper.parseObject(entity, ToolVO.class);
     }
 
-    public void deleteTool(Long id) throws ChangeSetPersister.NotFoundException {
-        logger.info("Deleting a tool (id =" + id + " )");
+    public void deleteTool(Long id) {
+        logger.info("Deleting a tool (id = " + id + ")");
 
-        var tool = repository.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        var tool = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool not found (id = " + id + ")"));
 
         repository.delete(tool);
     }

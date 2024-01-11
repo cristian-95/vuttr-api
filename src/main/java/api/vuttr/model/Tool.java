@@ -15,10 +15,13 @@ public class Tool {
     private Long id;
 
 
+    @Column(nullable = false, length = 50)
     private String title;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private String url;
 
     private List<String> tags;
