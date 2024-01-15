@@ -46,7 +46,7 @@ public class ToolService {
     }
 
     public ToolVO updateTool(ToolVO tool) {
-        logger.info("Updating a tool (id = " + tool.getId() + " )\"");
+        logger.info("Updating a tool (id = " + tool.getId() + ")");
 
         var updated = repository.findById(tool.getId()).orElseThrow(() -> new ResourceNotFoundException("Tool not found (id = " + tool.getId() + ")"));
         updated.setTitle(tool.getTitle());

@@ -2,6 +2,7 @@ package api.vuttr.data.vo;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,10 +18,18 @@ public class ToolVO implements Serializable {
     private List<String> tags;
 
     public ToolVO() {
+        this.tags = new ArrayList<>();
     }
 
     public ToolVO(Long id, String title, String description, String url, List<String> tags) {
         this.id = id;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.tags = tags;
+    }
+
+    public ToolVO( String title, String description, String url, List<String> tags) {
         this.title = title;
         this.description = description;
         this.url = url;
@@ -65,6 +74,9 @@ public class ToolVO implements Serializable {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+    public void addTag(String tag) {
+        this.tags.add(tag);
     }
 
     @Override
