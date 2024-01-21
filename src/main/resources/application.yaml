@@ -11,3 +11,9 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+springdoc:
+  pathsToMatch:
+    - /**
+  swagger-ui:
+    use-root-path: true
