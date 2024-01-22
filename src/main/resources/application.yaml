@@ -11,9 +11,12 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
+server:
+  port: 8080
+cors:
+  originPatterns: http://localhost:8080,http://localhost:80
 springdoc:
   pathsToMatch:
-    - /**
+    - /tools/**
   swagger-ui:
     use-root-path: true
