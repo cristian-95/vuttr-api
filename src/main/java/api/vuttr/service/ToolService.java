@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Service
 public class ToolService {
 
@@ -26,7 +29,10 @@ public class ToolService {
         logger.info("Finding all tools in the database");
 
         var entityList = repository.findAll();
-        return ToolMapper.parseList(entityList, ToolVO.class);
+
+        List<ToolVO> voList = ToolMapper.parseList(entityList, ToolVO.class);
+        voList.forEach((vo -> vo.add(linkTo(methodOn(ToolController.class).findById(vo.getId())).withSelfRel())));
+        return voList;
     }
 
     public ToolVO findToolById(Long id) throws ResourceNotFoundException {
@@ -34,7 +40,9 @@ public class ToolService {
 
         var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool not found (id = " + id + ")"));
 
-        return ToolMapper.parseObject(entity, ToolVO.class);
+        var vo = ToolMapper.parseObject(entity, ToolVO.class);
+        vo.add(linkTo(methodOn(ToolController.class).findById(vo.getId())).withSelfRel());
+        return vo;
     }
 
     public ToolVO createTool(ToolVO toolVO) {
@@ -44,7 +52,9 @@ public class ToolService {
         var entity = ToolMapper.parseObject(toolVO, Tool.class);
         repository.save(entity);
 
-        return ToolMapper.parseObject(entity, ToolVO.class);
+        var vo = ToolMapper.parseObject(entity, ToolVO.class);
+        vo.add(linkTo(methodOn(ToolController.class).findById(vo.getId())).withSelfRel());
+        return vo;
     }
 
     public ToolVO updateTool(ToolVO tool) {
@@ -57,7 +67,9 @@ public class ToolService {
         updated.setTags(tool.getTags());
         var entity = repository.save(updated);
 
-        return ToolMapper.parseObject(entity, ToolVO.class);
+        var vo = ToolMapper.parseObject(entity, ToolVO.class);
+        vo.add(linkTo(methodOn(ToolController.class).findById(vo.getId())).withSelfRel());
+        return vo;
     }
 
     public void deleteTool(Long id) {

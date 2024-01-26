@@ -45,6 +45,11 @@
             <version>2.0.2</version>
         </dependency>
 
+        <!-- Spring HATEOAS -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
 
         <!-- Model Mapper -->
         <dependency>
